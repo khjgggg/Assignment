@@ -18,7 +18,6 @@
 
             <ImageView
                 android:id="@+id/itemImgDetail"
-
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -169,12 +168,25 @@
         android:paddingEnd="@dimen/padding_horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <ImageView
-            android:id="@+id/imgDetailLike"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+<!--        <ImageView-->
+<!--            android:id="@+id/imgDetailLike"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="5dp"-->
+<!--            android:src="@drawable/selector_heart_click"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/tv_chatCount"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/tv_likeCount"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_chainStyle="packed"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/tv_chatCount"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/tv_chatCount" />-->
+
+        <CheckBox
+            android:id="@+id/chDetailLike"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginLeft="5dp"
-            android:src="@drawable/outline_favorite_border_24"
+            android:button="@drawable/selector_checked_heart"
             app:layout_constraintBottom_toBottomOf="@+id/tv_chatCount"
             app:layout_constraintEnd_toStartOf="@+id/tv_likeCount"
             app:layout_constraintHorizontal_bias="0.5"

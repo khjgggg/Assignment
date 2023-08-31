@@ -1,23 +1,27 @@
 package com.example.applemarket
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View.OnClickListener
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import com.example.applemarket.databinding.ActivityDetailBinding
-import com.example.applemarket.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 class DetailActivity : AppCompatActivity() {
     private val binding by lazy { ActivityDetailBinding.inflate(layoutInflater) }
     //    val TAG = this.javaClass.simpleName
+
+    var detail: ItemGoods? = null
+    var position: Int = -1
+    var isFavor = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        var detail: ItemGoods? = intent.getParcelableExtra("DATA")
+        detail = intent.getParcelableExtra("DATA")
+        position = intent.getIntExtra("POS", -1)
         if (detail == null) {
             Toast.makeText(this, "데이타가 없습니다.", Toast.LENGTH_SHORT).show()
             finish()
@@ -26,18 +30,43 @@ class DetailActivity : AppCompatActivity() {
 //        Log.d(TAG, "########"+ detail.toString())
 
         //판매자, 주소, 아이템, 글내용, 가격등을 화면에 표시
-        binding.itemImgDetail.setImageResource(detail.aIcon)
-        binding.tvName.text = detail.aSeller
-        binding.tvAddress.text = detail.aAddress
-        binding.tvContentMiddleTitle.text = detail.aName
-        binding.tvContentMiddleDes.text = detail.aIntro
-        binding.tvDetailPriceBottom.text = addCommaIncludeWon(detail.aPrice)
+        binding.itemImgDetail.setImageResource(detail?.aIcon!!)
+        binding.tvName.text = detail?.aSeller
+        binding.tvAddress.text = detail?.aAddress
+        binding.tvContentMiddleTitle.text = detail?.aName
+        binding.tvContentMiddleDes.text = detail?.aIntro
+        binding.tvDetailPriceBottom.text = addCommaIncludeWon(detail?.aPrice)
+        binding.chDetailLike.isChecked = detail?.isFavor!!
 
-        val btnBack = findViewById<ImageView>(R.id.imageViewBack)
-        btnBack.setOnClickListener {
+        //백키 누르면 종료
+        binding.imageViewBack.setOnClickListener {
+            val i = Intent().apply {
+                putExtra("POS", position)
+                putExtra("ISFAVOR", isFavor)
+            }
+            setResult(Activity.RESULT_OK, i)
             finish()
         }
 
+        //하트클릭이벤트
+        binding.chDetailLike.setOnCheckedChangeListener {
+                buttonView, isChecked ->
+            isFavor = isChecked
+            if (isChecked) {
+                Snackbar.make(buttonView, "관심 목록에 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
+            }
+
+        }
     }
+    override fun onBackPressed() {
+        val i = Intent().apply {
+            putExtra("POS", position)
+            putExtra("ISFAVOR", isFavor)
+        }
+        setResult(Activity.RESULT_OK, i)
+        finish()
+    }
+
+
 
 }

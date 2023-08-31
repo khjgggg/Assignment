@@ -104,7 +104,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginLeft="5dp"
-        android:src="@drawable/outline_favorite_border_24"
+        android:src="@drawable/selector_checked_heart"
         app:layout_constraintBottom_toBottomOf="@+id/tv_chatCount"
         app:layout_constraintEnd_toStartOf="@+id/tv_likeCount"
         app:layout_constraintHorizontal_bias="0.5"
@@ -125,6 +125,8 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/img_like"
         app:layout_constraintTop_toTopOf="@+id/img_like" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,13 +11,14 @@ data class ItemGoods(
     val aSeller: String,
     val aPrice: String,
     val aAddress: String,
-    val alike: String,
-    val aComment: String
+    var alike: Int,
+    val aComment: String,
+    var isFavor: Boolean = false
 ) : Parcelable
 
 
 //데이터 원본 준비
-val dataList = mutableListOf<ItemGoods>().apply {
+var dataList = mutableListOf<ItemGoods>().apply {
     add(
         ItemGoods(
             R.drawable.sample1,
@@ -26,7 +27,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "대현동",
             "1000",
             "서울 서대문구 창천동",
-            "13",
+            13,
             "25"
         )
     )
@@ -38,7 +39,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "안마담",
             "20000",
             "인천 계양구 귤현동",
-            "8",
+            8,
             "28"
         )
     )
@@ -50,7 +51,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "코코유",
             "10000",
             "수성구 범어동",
-            "23",
+            23,
             "5"
         )
     )
@@ -62,7 +63,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "Nicole",
             "10000",
             "해운대구 우제2동",
-            "14",
+            14,
             "17"
         )
     )
@@ -74,7 +75,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "절명",
             "150000",
             "연제구 연산제8동",
-            "22",
+            22,
             "9"
         )
     )
@@ -86,7 +87,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "미니멀하게",
             "50000",
             "수원시 영통구 원천동",
-            "25",
+            25,
             "16"
         )
     )
@@ -98,7 +99,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "굿리치",
             "150000",
             "남구 옥동",
-            "142",
+            142,
             "54"
         )
     )
@@ -110,7 +111,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "난쉽",
             "180000",
             "동래구 온천제2동",
-            "31",
+            31,
             "7"
         )
     )
@@ -122,7 +123,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "알뜰한",
             "30000",
             "원주시 명륜2동",
-            "7",
+            7,
             "28"
         )
     )
@@ -134,7 +135,7 @@ val dataList = mutableListOf<ItemGoods>().apply {
             "똑태현",
             "190000",
             "중구 동화동",
-            "40",
+            40,
             "6"
         )
     )

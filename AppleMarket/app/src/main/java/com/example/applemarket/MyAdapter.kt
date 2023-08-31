@@ -10,6 +10,7 @@ class MyAdapter (val dataList: MutableList<ItemGoods>) : RecyclerView.Adapter<My
 
     interface ItemClick {
         fun onClick(position: Int)
+        fun onLongClick(position: Int)
     }
 
     var itemClick: ItemClick? = null
@@ -29,13 +30,24 @@ class MyAdapter (val dataList: MutableList<ItemGoods>) : RecyclerView.Adapter<My
             //인터페이스를 사용해서 메인으로 해당 이벤트의 정보를 넘겨주고 싶어.
             //그럼 받는 쪽(메인액티비티)에서 필요한 정보를 여기서 넘겨줌
         }
-        val size = dataList.size
+        holder.itemView.setOnLongClickListener {
+            itemClick?.onLongClick(position)
+
+            true
+        }
+
         holder.icItemImg.setImageResource(dataList[position].aIcon)
         holder.name.text = dataList[position].aName
         holder.address.text = dataList[position].aAddress
         holder.price.text = addCommaIncludeWon(dataList[position].aPrice)
-        holder.tvChatNum.text =dataList[position].aComment
-        holder.tvLikeNum.text = dataList[position].alike
+        holder.tvChatNum.text = dataList[position].aComment
+        holder.imgLike.isSelected = dataList[position].isFavor
+        holder.tvLikeNum.text = aLikeCnt(dataList[position])
+    }
+
+    private fun aLikeCnt(item: ItemGoods): String {
+        return if(item.isFavor) (item.alike + 1).toString()
+        else item.alike.toString()
     }
 
     override fun getItemCount(): Int {
@@ -48,6 +60,7 @@ class MyAdapter (val dataList: MutableList<ItemGoods>) : RecyclerView.Adapter<My
         val address = binding.tvAddress
         val price = binding.tvPrice
         val tvChatNum = binding.tvChatCount
+        val imgLike = binding.imgLike
         val tvLikeNum = binding.tvLikeCount
 
 
