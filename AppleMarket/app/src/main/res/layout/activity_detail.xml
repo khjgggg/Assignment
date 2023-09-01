@@ -35,8 +35,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/padding_horizontal"
-                   >
+                    android:padding="@dimen/padding_horizontal">
 
                     <ImageView
                         android:id="@+id/ic_profile"
@@ -64,7 +63,8 @@
                             android:padding="@dimen/list_item_padding"
                             android:text="프라다 복조리백"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/list_item_text_size2" />
+                            android:textSize="@dimen/list_item_text_size2"
+                            />
 
                         <TextView
                             android:id="@+id/tvAddress"
@@ -89,9 +89,9 @@
                             android:layout_height="wrap_content"
                             android:includeFontPadding="false"
                             android:text="39.3 ℃"
+                            android:textColor="@color/green"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:textColor="@color/green"
                             app:layout_constraintBottom_toBottomOf="@id/imgContentTopDegree"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="@id/imgContentTopDegree" />
@@ -113,8 +113,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="4dp"
                             android:text="@string/manner"
-                            android:textSize="12dp"
                             android:textColor="@color/gingray"
+                            android:textSize="12dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/imgContentTopDegree" />
@@ -141,17 +141,19 @@
                     android:paddingEnd="@dimen/padding_horizontal"
                     android:text="샤넬 탑핸들 가능"
                     android:textSize="25dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
 
                 <TextView
                     android:id="@+id/tvContentMiddleDes"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingTop="@dimen/padding_vertical"
                     android:paddingStart="@dimen/padding_horizontal"
+                    android:paddingTop="@dimen/padding_vertical"
                     android:paddingEnd="@dimen/padding_horizontal"
                     android:text="@string/aaa"
-                    android:textSize="19dp" />
+                    android:textSize="19dp"
+                    android:textColor="@color/black"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -168,24 +170,12 @@
         android:paddingEnd="@dimen/padding_horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
-<!--        <ImageView-->
-<!--            android:id="@+id/imgDetailLike"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:src="@drawable/selector_heart_click"-->
-<!--            app:layout_constraintBottom_toBottomOf="@+id/tv_chatCount"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/tv_likeCount"-->
-<!--            app:layout_constraintHorizontal_bias="0.5"-->
-<!--            app:layout_constraintHorizontal_chainStyle="packed"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/tv_chatCount"-->
-<!--            app:layout_constraintTop_toTopOf="@+id/tv_chatCount" />-->
-
         <CheckBox
             android:id="@+id/chDetailLike"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginLeft="5dp"
+            android:visibility="visible"
             android:button="@drawable/selector_checked_heart"
             app:layout_constraintBottom_toBottomOf="@+id/tv_chatCount"
             app:layout_constraintEnd_toStartOf="@+id/tv_likeCount"
@@ -209,7 +199,8 @@
             android:gravity="center_vertical"
             android:text="180000"
             android:textSize="22dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
 
         <TextView
             android:layout_width="wrap_content"

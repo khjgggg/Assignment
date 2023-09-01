@@ -16,7 +16,6 @@ data class ItemGoods(
     var isFavor: Boolean = false
 ) : Parcelable
 
-
 //데이터 원본 준비
 var dataList = mutableListOf<ItemGoods>().apply {
     add(

@@ -11,7 +11,6 @@ import com.google.android.material.snackbar.Snackbar
 
 class DetailActivity : AppCompatActivity() {
     private val binding by lazy { ActivityDetailBinding.inflate(layoutInflater) }
-    //    val TAG = this.javaClass.simpleName
 
     var detail: ItemGoods? = null
     var position: Int = -1
@@ -27,7 +26,6 @@ class DetailActivity : AppCompatActivity() {
             finish()
             return
         }
-//        Log.d(TAG, "########"+ detail.toString())
 
         //판매자, 주소, 아이템, 글내용, 가격등을 화면에 표시
         binding.itemImgDetail.setImageResource(detail?.aIcon!!)
@@ -40,25 +38,17 @@ class DetailActivity : AppCompatActivity() {
 
         //백키 누르면 종료
         binding.imageViewBack.setOnClickListener {
-            val i = Intent().apply {
-                putExtra("POS", position)
-                putExtra("ISFAVOR", isFavor)
-            }
-            setResult(Activity.RESULT_OK, i)
-            finish()
+            resultFinish()
         }
-
         //하트클릭이벤트
-        binding.chDetailLike.setOnCheckedChangeListener {
-                buttonView, isChecked ->
+        binding.chDetailLike.setOnCheckedChangeListener { buttonView, isChecked ->
             isFavor = isChecked
             if (isChecked) {
                 Snackbar.make(buttonView, "관심 목록에 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
             }
-
         }
     }
-    override fun onBackPressed() {
+    fun resultFinish() {
         val i = Intent().apply {
             putExtra("POS", position)
             putExtra("ISFAVOR", isFavor)
@@ -66,7 +56,7 @@ class DetailActivity : AppCompatActivity() {
         setResult(Activity.RESULT_OK, i)
         finish()
     }
-
-
-
+    override fun onBackPressed() {
+        resultFinish()
+    }
 }

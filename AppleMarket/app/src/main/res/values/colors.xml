@@ -6,4 +6,5 @@
     <color name="gingray">#727272</color>
     <color name="green">#008000</color>
     <color name="orange">#ff4500</color>
+    <color name="alpha_orange">#22ff4500</color>
 </resources>

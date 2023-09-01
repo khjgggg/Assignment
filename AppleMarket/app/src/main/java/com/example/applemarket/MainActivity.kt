@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        checkPermission()
+
         //어댑터 생성 및 연결
         val adapter = MyAdapter(dataList)
         binding.recyclerView.adapter = adapter
@@ -54,11 +57,30 @@ class MainActivity : AppCompatActivity() {
                 }
                 resultLauncher.launch(i)
             }
-            //롱클릭시 삭제 여부를 묻는 다이얼로그를 띄우고
-            //확인을 선택시 해당 항목을 삭제하고 리스트를 업데이트
+
+            //롱클릭시 삭제 여부를 묻는 다이얼로그를 띄우고 확인을 선택시 해당 항목을 삭제하고 리스트를 업데이트
             override fun onLongClick(position: Int) {
-                //삭제하시겠어? 팝업을 띄우기
-                Log.d("rido", "onLongClick $position")
+                var builder = AlertDialog.Builder(this@MainActivity)
+
+                builder.setTitle("상품 삭제")
+                builder.setMessage("상품을 정말로 삭제하시겠습니까?")
+                builder.setIcon(R.drawable.chat_image)
+
+                val listener = object : DialogInterface.OnClickListener {
+                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                        when (p1) {
+                            DialogInterface.BUTTON_POSITIVE -> {
+                                dataList.removeAt(position)
+                                adapter.notifyDataSetChanged()
+                            }
+                            DialogInterface.BUTTON_NEGATIVE -> {
+                            }
+                        }
+                    }
+                }
+                builder.setPositiveButton("확인", listener)
+                builder.setNegativeButton("취소", listener)
+                builder.show()
             }
         }
         //플로팅버튼 애니메이션 효과
@@ -70,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             binding.recyclerView.smoothScrollToPosition(0)
         }
         /**RecyclerView의 Scroll 상태 변화에 따라 변화를 주어야 하므로 이를 감지하기 위하여 RecyclerView.OnScrollListener 리스너를 재정의*/
-        binding.recyclerView.addOnScrollListener(object:RecyclerView.OnScrollListener(){
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 /**현재 리스트의 최상단을 검사하기 위해 if문 사용
@@ -78,12 +100,13 @@ class MainActivity : AppCompatActivity() {
                 canScrollVertically(1) : 최하단일 경우 false 값 return
                 RecyclerView.SCROLL_STATE_IDLE은 현재 스크롤되지 않는 상태임을 나타내며, 이를 조건에 추가해주는 이유는 스크롤에 인한 중복 발생을 방지*/
                 if (!binding.recyclerView.canScrollVertically(-1)
-                    && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    && newState == RecyclerView.SCROLL_STATE_IDLE
+                ) {
                     binding.btnFloating.startAnimation(fadeOut)
                     binding.btnFloating.visibility = View.GONE
                     isTop = true
-                }else{
-                    if (isTop){
+                } else {
+                    if (isTop) {
                         binding.btnFloating.visibility = View.VISIBLE
                         binding.btnFloating.startAnimation(fadeIn)
                         isTop = false
@@ -97,19 +120,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //상세페이지에서 전달받은 포지션,좋아요 여부 값을 받아서 데이터랑 리스트 갱신
     @SuppressLint("NotifyDataSetChanged")
-    val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if (it.resultCode == RESULT_OK) {
-            val intent = it.data
-            val pos = intent?.getIntExtra("POS", -1)
-            val isFavor = intent?.getBooleanExtra("ISFAVOR", false)
+    val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                val intent = it.data
+                val pos = intent?.getIntExtra("POS", -1)
+                val isFavor = intent?.getBooleanExtra("ISFAVOR", false)
 
-            if(pos != -1 && pos != null && isFavor != null) dataList[pos].isFavor = isFavor
-
-            //리스트 데이타 갱신
-            (binding.recyclerView.adapter as MyAdapter).notifyDataSetChanged()
+                if (pos != -1 && pos != null && isFavor != null) {
+                    (binding.recyclerView.adapter as MyAdapter).dataList[pos].isFavor = isFavor
+                    //리스트 데이타 갱신
+                    (binding.recyclerView.adapter as MyAdapter).notifyDataSetChanged()
+                }
+            }
         }
-    }
 
     //뒤로가기(BACK)버튼 클릭시 종료하시겠습니까? [확인][취소] 다이얼로그
     override fun onBackPressed() {
@@ -132,6 +158,7 @@ class MainActivity : AppCompatActivity() {
         builder.setNegativeButton("취소", listener)
         builder.show()
     }
+
     fun notification() {
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
@@ -189,8 +216,63 @@ class MainActivity : AppCompatActivity() {
         }
         manager.notify(11, builder.build())
     }
-}
 
+    private val ACTIVITY_REQUEST_PERMISSION = 1
+
+    private fun checkPermission() {
+        val permissions = getPermissions()
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(permissions, ACTIVITY_REQUEST_PERMISSION)
+                return
+            }
+        }
+    }
+
+    private fun getPermissions(): Array<String> {
+        val permissions = ArrayList<String>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        val arrPermission = arrayOfNulls<String>(permissions.size)
+        return permissions.toArray(arrPermission)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (grantResults.isEmpty()) {
+            Toast.makeText(this, "권한 결과 데이타가 없음", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (requestCode == ACTIVITY_REQUEST_PERMISSION) {
+            var isGrantedNoti = false
+            for (index in grantResults.indices) {
+                if (permissions[index] == android.Manifest.permission.POST_NOTIFICATIONS
+                    && grantResults[index] == PackageManager.PERMISSION_GRANTED
+                ) {
+                    isGrantedNoti = true
+                }
+            }
+
+            if (!isGrantedNoti) {
+                Toast.makeText(this, "알림 권한이 필요합니다. 설정에서 알림 권한을 켜주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+}
 
 
 //천단위 콤마처리(1)

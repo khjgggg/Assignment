@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="@color/white" />
-    <size
-        android:width="31dp"
-        android:height="31dp"/>
-    <stroke
-        android:width="1dp"
-        android:color="#FB7A25" />
-
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/white" />
+            <size
+                android:width="31dp"
+                android:height="31dp"/>
+            <stroke
+                android:width="1dp"
+                android:color="#FB7A25" />
+        </shape>
+    </item>
+    <item>
+        <inset android:drawable="@drawable/baseline_arrow_upward_24"
+            android:inset="4dp"
+             />
+    </item>
+</layer-list>

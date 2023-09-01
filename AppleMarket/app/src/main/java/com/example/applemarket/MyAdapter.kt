@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.applemarket.databinding.ItemRecyclerviewBinding
 import java.text.DecimalFormat
 
-class MyAdapter (val dataList: MutableList<ItemGoods>) : RecyclerView.Adapter<MyAdapter.Holder>() {
+class MyAdapter(val dataList: MutableList<ItemGoods>) : RecyclerView.Adapter<MyAdapter.Holder>() {
 
     interface ItemClick {
         fun onClick(position: Int)
@@ -15,27 +15,20 @@ class MyAdapter (val dataList: MutableList<ItemGoods>) : RecyclerView.Adapter<My
 
     var itemClick: ItemClick? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyAdapter.Holder {
-        val binding = ItemRecyclerviewBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        val binding =
+            ItemRecyclerviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return Holder(binding)
     }
 
     override fun onBindViewHolder(holder: MyAdapter.Holder, position: Int) {
-// 천단위 콤마처리(2)
-// val addCommaIncludeWon = DecimalFormat("#.###")
 
         holder.itemView.setOnClickListener {
             itemClick?.onClick(position)
-
-            //아이템 클릭 이벤트 발생
-            //인터페이스를 사용해서 메인으로 해당 이벤트의 정보를 넘겨주고 싶어.
-            //그럼 받는 쪽(메인액티비티)에서 필요한 정보를 여기서 넘겨줌
         }
         holder.itemView.setOnLongClickListener {
             itemClick?.onLongClick(position)
-
             true
         }
-
         holder.icItemImg.setImageResource(dataList[position].aIcon)
         holder.name.text = dataList[position].aName
         holder.address.text = dataList[position].aAddress
@@ -46,15 +39,17 @@ class MyAdapter (val dataList: MutableList<ItemGoods>) : RecyclerView.Adapter<My
     }
 
     private fun aLikeCnt(item: ItemGoods): String {
-        return if(item.isFavor) (item.alike + 1).toString()
-        else item.alike.toString()
+        return if (item.isFavor) {
+            (item.alike + 1).toString()
+        } else item.alike.toString()
     }
 
     override fun getItemCount(): Int {
         return dataList.size
     }
 
-    inner class Holder(val binding: ItemRecyclerviewBinding) : RecyclerView.ViewHolder(binding.root){
+    inner class Holder(val binding: ItemRecyclerviewBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         val icItemImg = binding.iconItem
         val name = binding.tvName
         val address = binding.tvAddress
@@ -62,7 +57,5 @@ class MyAdapter (val dataList: MutableList<ItemGoods>) : RecyclerView.Adapter<My
         val tvChatNum = binding.tvChatCount
         val imgLike = binding.imgLike
         val tvLikeNum = binding.tvLikeCount
-
-
     }
 }
