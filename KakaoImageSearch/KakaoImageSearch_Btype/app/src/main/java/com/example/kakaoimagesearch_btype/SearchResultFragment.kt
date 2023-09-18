@@ -1,5 +1,7 @@
 package com.example.kakaoimagesearch_btype
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,12 +16,13 @@ import kotlinx.coroutines.launch
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
-
+const val PREF_KEY = "PREF_KEY"
 
 class SearchResultFragment : Fragment() {
-
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var sharedPref: SharedPreferences
+
     private lateinit var binding: FragmentSearchResultBinding
     private val staggeredListAdapter by lazy {
         StaggeredGridAdapter()
@@ -37,12 +40,19 @@ class SearchResultFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        communicateNetWork(setUpImageParameter("뉴진스")) //text는 입력된 검색어
+
+        sharedPref = requireActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
+
         binding = FragmentSearchResultBinding.inflate(inflater,container,false)
         binding.svSearch.isSubmitButtonEnabled = true
         binding.svSearch.setOnQueryTextListener(object : OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
+                    with (sharedPref.edit()) {
+                        putString("prevSearch", it)
+                        apply()
+                    }
+
                     communicateNetWork(setUpImageParameter(it))
                 }
                return false
@@ -61,6 +71,12 @@ class SearchResultFragment : Fragment() {
         staggeredGridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE;
         binding.srRecyclerview.layoutManager = staggeredGridLayoutManager
 
+
+        //저장해둔 이전 검색어를 자동으로 입력해서 검색한다.
+        val prevText = sharedPref.getString("prevSearch", "")
+        if (prevText?.isNotEmpty() == true) {
+            binding.svSearch.setQuery(prevText, true)
+        }
 
     }
 
