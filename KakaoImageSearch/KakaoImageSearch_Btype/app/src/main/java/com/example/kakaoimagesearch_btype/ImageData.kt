@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ImageData(
-    val documents: List<Document?>?,
+    val documents: MutableList<Document>?,
     val meta: Meta?
 ):Parcelable {
     @Parcelize
