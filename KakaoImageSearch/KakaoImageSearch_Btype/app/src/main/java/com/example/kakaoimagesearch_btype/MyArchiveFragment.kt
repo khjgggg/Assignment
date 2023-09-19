@@ -5,21 +5,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.kakaoimagesearch_btype.databinding.FragmentMyArchiveBinding
+import com.google.gson.GsonBuilder
+import java.lang.Exception
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MyArchiveFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MyArchiveFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private lateinit var binding: FragmentMyArchiveBinding
+    private val staggeredMyArchiveListAdapter by lazy {
+        StaggeredMyArchiveGridAdapter()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +34,58 @@ class MyArchiveFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_archive, container, false)
+        binding = FragmentMyArchiveBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.myArchiveRecyclerview.adapter = staggeredMyArchiveListAdapter
+        val layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE;
+        binding.myArchiveRecyclerview.layoutManager = layoutManager
+
+        updateList()    //화면을 생성하면 데이타를 업데이트한다.
+
+        staggeredMyArchiveListAdapter.itemClick = object : StaggeredMyArchiveGridAdapter.ItemClick {
+            override fun onClick(position: Int) { }
+
+            override fun onLongClick(position: Int) { }
+
+            override fun onClickAddFolder(doc: ImageData.Document) {
+            }
+        }
+
+    }
+
+    fun updateList() {
+        //프리퍼런스에서 검색프래그먼트에서 저장했던 목록을 가져온다
+        val prevSaveList = SharedPref.getString(requireContext(), "addFolder", "")
+        //String으로 저장했던 Json String을 MutableList로 변환하고
+        val prevList = convertToObject(prevSaveList)
+        //어댑터에 추가한다
+        staggeredMyArchiveListAdapter.addItems(prevList)
+    }
+
+    private fun convertToString(imgDataList: MutableList<ImageData.Document>): String {
+        //프리퍼런스에 저장하려면 객체를 String으로 변환해서 저장해야 한다.
+        //해당 함수는 객체를 String으로 변환하는 함수
+        return GsonBuilder()
+            .disableHtmlEscaping()
+            .create()
+            .toJson(imgDataList)
+    }
+
+    /**
+     * json String을 객체로 변환하는 함수
+     */
+    private fun convertToObject(jsonStr: String): MutableList<ImageData.Document> {
+        return try {
+            GsonBuilder().create().fromJson(jsonStr, Array<ImageData.Document>::class.java).toMutableList()
+        } catch (e: Exception) {
+            mutableListOf()
+        }
     }
 
     companion object {

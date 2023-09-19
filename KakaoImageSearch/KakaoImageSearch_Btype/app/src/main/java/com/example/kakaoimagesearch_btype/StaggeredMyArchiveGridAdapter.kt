@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kakaoimagesearch_btype.databinding.LayoutPhotoItemBinding
 
-class StaggeredGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class StaggeredMyArchiveGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     interface ItemClick {
         fun onClick(position: Int)
@@ -19,7 +19,7 @@ class StaggeredGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return StaggeredGridItemViewHolder(
+        return StaggeredMyArchiveGridItemViewHolder(
             LayoutPhotoItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -35,7 +35,7 @@ class StaggeredGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
 
-        val gridItemViewHolder = (holder as StaggeredGridItemViewHolder)
+        val gridItemViewHolder = (holder as StaggeredMyArchiveGridItemViewHolder)
         gridItemViewHolder.bind(item)
         gridItemViewHolder.itemView.setOnClickListener {
             itemClick?.onClick(position)
@@ -57,7 +57,7 @@ class StaggeredGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    inner class StaggeredGridItemViewHolder(val binding: LayoutPhotoItemBinding) :
+    inner class StaggeredMyArchiveGridItemViewHolder(val binding: LayoutPhotoItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ImageData.Document) {
             binding.item = item

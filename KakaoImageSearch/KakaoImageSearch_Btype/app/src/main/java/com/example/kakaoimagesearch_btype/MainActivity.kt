@@ -19,6 +19,13 @@ class MainActivity : AppCompatActivity() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     binding.bottomNavigationView.menu.getItem(position).isChecked = true
+
+                    //선택된 프래그먼트를 가져와서
+                    val frag = supportFragmentManager.findFragmentByTag("f$position")
+                    // 프래그먼트가 MyArchiveFragment이면 리스트를 업데이트
+                    if (frag is MyArchiveFragment) {
+                        frag.updateList()   //리스트 업데이트를 위한 함수
+                    }
                 }
             }
         )
@@ -39,6 +46,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        onDestroy()
     }
 }
 
