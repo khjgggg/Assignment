@@ -3,7 +3,7 @@ package com.example.kakaoimagesearch_btype
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kakaoimagesearch_btype.databinding.ItemRecyclerviewBinding
+import com.example.kakaoimagesearch_btype.databinding.LayoutPhotoItemBinding
 
 class StaggeredGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -17,7 +17,7 @@ class StaggeredGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return StaggeredGridItemViewHolder(ItemRecyclerviewBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return StaggeredGridItemViewHolder(LayoutPhotoItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -43,10 +43,22 @@ class StaggeredGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    inner class StaggeredGridItemViewHolder(private val binding: ItemRecyclerviewBinding) :
+    inner class StaggeredGridItemViewHolder(private val binding: LayoutPhotoItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ImageData.Document) {
             binding.item = item
+//            binding.ivAddFolder.setOnClickListener{
+//                // [2] Fragment -> Fragment
+//                    val dataToSend = "Hello Fragment2! \n From Fragment1"
+//                    val fragment2 = MyArchiveFragment.newInstance(dataToSend)
+//                    requireActivity().supportFragmentManager.beginTransaction()
+//                        .replace(R.id.frameLayout, fragment2)
+//                        .addToBackStack(null)
+//                        .commit()
+//                            }
+//            binding.ivFavorite.setOnClickListener {
+//
+//            }
         }
     }
 }

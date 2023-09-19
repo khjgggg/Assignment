@@ -43,20 +43,21 @@ class SearchResultFragment : Fragment() {
 
         sharedPref = requireActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
 
-        binding = FragmentSearchResultBinding.inflate(inflater,container,false)
+        binding = FragmentSearchResultBinding.inflate(inflater, container, false)
         binding.svSearch.isSubmitButtonEnabled = true
-        binding.svSearch.setOnQueryTextListener(object : OnQueryTextListener{
+        binding.svSearch.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    with (sharedPref.edit()) {
+                    with(sharedPref.edit()) {
                         putString("prevSearch", it)
                         apply()
                     }
 
                     communicateNetWork(setUpImageParameter(it))
                 }
-               return false
+                return false
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 return true
             }
@@ -67,17 +68,16 @@ class SearchResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.srRecyclerview.adapter = staggeredListAdapter
-        val staggeredGridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        val staggeredGridLayoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         staggeredGridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE;
         binding.srRecyclerview.layoutManager = staggeredGridLayoutManager
-
 
         //저장해둔 이전 검색어를 자동으로 입력해서 검색한다.
         val prevText = sharedPref.getString("prevSearch", "")
         if (prevText?.isNotEmpty() == true) {
             binding.svSearch.setQuery(prevText, true)
         }
-
     }
 
     private fun communicateNetWork(param: HashMap<String, String>) = lifecycleScope.launch {
