@@ -9,7 +9,7 @@ class StaggeredMyArchiveGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHold
 
     interface ItemClick {
         fun onClick(position: Int)
-        fun onLongClick(position: Int)
+        fun onLongClick(doc: ImageData.Document)
 
         fun onClickAddFolder(doc: ImageData.Document)
     }
@@ -41,7 +41,7 @@ class StaggeredMyArchiveGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHold
             itemClick?.onClick(position)
         }
         gridItemViewHolder.itemView.setOnLongClickListener {
-            itemClick?.onLongClick(position)
+            itemClick?.onLongClick(item)
             true
         }
         gridItemViewHolder.binding.ivAddFolder.setOnClickListener {

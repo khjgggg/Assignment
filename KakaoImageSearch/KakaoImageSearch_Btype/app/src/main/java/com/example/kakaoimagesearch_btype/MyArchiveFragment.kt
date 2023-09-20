@@ -1,10 +1,13 @@
 package com.example.kakaoimagesearch_btype
 
+import android.content.DialogInterface
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Im
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.kakaoimagesearch_btype.databinding.FragmentMyArchiveBinding
 import com.example.kakaoimagesearch_btype.utils.SharedPref
@@ -52,14 +55,44 @@ class MyArchiveFragment : Fragment() {
         staggeredMyArchiveListAdapter.itemClick = object : StaggeredMyArchiveGridAdapter.ItemClick {
             override fun onClick(position: Int) { }
 
-            override fun onLongClick(position: Int) { }
+            override fun onLongClick(doc: ImageData.Document) {
+                var builder = AlertDialog.Builder(context!!)
+                builder.setTitle("연락처 삭제")
+                builder.setMessage("정말로 삭제하시겠습니까?")
+                builder.setIcon(R.drawable.ic_baseline_delete_outline_24)
+                val listener = object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, p1: Int) {
+                        when (p1) {
+                            DialogInterface.BUTTON_POSITIVE -> {
+                                deleteDataRefrash(doc)
+                            }
+                            DialogInterface.BUTTON_NEGATIVE -> {
+                            }
+                        }
+                    }
+                }
+                builder.setPositiveButton("확인", listener)
+                builder.setNegativeButton("취소", listener)
+                builder.show()
+            }
 
             override fun onClickAddFolder(doc: ImageData.Document) {
             }
         }
-
     }
+    private fun deleteDataRefrash(doc: ImageData.Document) {
+        //저장된 목록을 프리퍼런스에서 가져온다
+        val prevSaveList = SharedPref.getString(requireContext(), "addFolder", "")
+        //가져온 목록을 리스트객체로 변환
+        val prevList = convertToObject(prevSaveList)
 
+        if (prevList.contains(doc)) {
+            prevList.remove(doc)
+        }
+        //추가한 목록을 저장한다
+        SharedPref.setString(requireContext(), "addFolder", convertToString(prevList))
+        updateList()
+    }
     fun updateList() {
         //프리퍼런스에서 검색프래그먼트에서 저장했던 목록을 가져온다
         val prevSaveList = SharedPref.getString(requireContext(), "addFolder", "")
