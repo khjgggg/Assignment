@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.kakaoimagesearch_btype.databinding.FragmentMyArchiveBinding
+import com.example.kakaoimagesearch_btype.utils.SharedPref
 import com.google.gson.GsonBuilder
 import java.lang.Exception
 

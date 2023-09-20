@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.kakaoimagesearch_btype.databinding.FragmentSearchResultBinding
 import com.example.kakaoimagesearch_btype.retrofit.NetWorkClient
+import com.example.kakaoimagesearch_btype.utils.SharedPref
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.launch
 import java.lang.Exception
