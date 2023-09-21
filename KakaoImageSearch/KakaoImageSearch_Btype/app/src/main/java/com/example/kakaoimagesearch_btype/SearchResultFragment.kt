@@ -42,7 +42,7 @@ class SearchResultFragment : Fragment() {
                 query?.let {
                     SharedPref.setString(requireContext(),"prevSearch", it)
 
-                    communicateNetWork(setUpImageParameter(it))
+                    communicateNetWork(setUpImageParameter(it), setUpVideoParameter(it))
                 }
                 return false
             }
@@ -106,14 +106,18 @@ class SearchResultFragment : Fragment() {
         }
     }
 
-    private fun communicateNetWork(param: HashMap<String, String>) = lifecycleScope.launch {
-        val responseData = NetWorkClient.kakaoNetWork.getImage(NetWorkClient.API_AUTHKEY, param)
-//        val responseVideoData = NetWorkClient.kakaoNetWork.getVideo(NetWorkClient.API_AUTHKEY, setUpVideoParameter("강아지"))
+    private fun communicateNetWork(imgParam: HashMap<String, String>, videoParam: HashMap<String, String>)
+    = lifecycleScope.launch {
+        val responseData = NetWorkClient.kakaoNetWork.getImage(NetWorkClient.API_AUTHKEY, imgParam)
+        val responseVideoData = NetWorkClient.kakaoNetWork.getVideo(NetWorkClient.API_AUTHKEY, videoParam)
+
+        val combinedList = mutableListOf<KakaoCommonData>()
+        responseData.documents?.let { combinedList.addAll(it) }
+        responseVideoData.documents?.let { combinedList.addAll(it) }
+        combinedList.sortBy { it.datetime }
 
         requireActivity().runOnUiThread {
-            responseData.documents?.let {
-                (binding.srRecyclerview.adapter as StaggeredGridAdapter).addItems(it)
-            }
+            (binding.srRecyclerview.adapter as StaggeredGridAdapter).addItems(combinedList)
         }
     }
 
