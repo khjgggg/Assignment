@@ -114,6 +114,7 @@ class SearchResultFragment : Fragment() {
 
     private fun communicateNetWork(param: HashMap<String, String>) = lifecycleScope.launch {
         val responseData = NetWorkClient.kakaoNetWork.getImage(NetWorkClient.API_AUTHKEY, param)
+//        val responseVideoData = NetWorkClient.kakaoNetWork.getVideo(NetWorkClient.API_AUTHKEY, setUpVideoParameter("강아지"))
 
         requireActivity().runOnUiThread {
             responseData.documents?.let {
@@ -128,6 +129,14 @@ class SearchResultFragment : Fragment() {
             "sort" to "accuracy", // accuracy(정확도순) 또는 recency(최신순), 기본 값 accuracy
             "page" to "1",  //결과 페이지 번호, 1~50 사이의 값, 기본 값 1
             "size" to "80"  //한 페이지에 보여질 문서 수, 1~80 사이의 값, 기본 값 80
+        )
+    }
+    private fun setUpVideoParameter(searchText: String): HashMap<String, String> {
+        return hashMapOf(
+            "query" to searchText,
+            "sort" to "accuracy", // accuracy(정확도순) 또는 recency(최신순), 기본 값 accuracy
+            "page" to "1",  //결과 페이지 번호, 1~15 사이의 값
+            "size" to "15"  //한 페이지에 보여질 문서 수, 1~30 사이의 값, 기본 값
         )
     }
 
