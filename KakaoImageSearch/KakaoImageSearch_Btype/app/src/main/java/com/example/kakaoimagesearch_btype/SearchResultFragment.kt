@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.kakaoimagesearch_btype.databinding.FragmentSearchResultBinding
 import com.example.kakaoimagesearch_btype.retrofit.NetWorkClient
@@ -25,6 +26,9 @@ class SearchResultFragment : Fragment() {
     private val staggeredListAdapter by lazy {
         StaggeredGridAdapter()
     }
+    private var isLoading = false
+    private var pageCnt = 0
+    private var prevSearchText = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +45,6 @@ class SearchResultFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     SharedPref.setString(requireContext(),"prevSearch", it)
-
                     communicateNetWork(setUpImageParameter(it), setUpVideoParameter(it))
                 }
                 return false
@@ -99,6 +102,20 @@ class SearchResultFragment : Fragment() {
             }
         }
 
+        binding.srRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (!recyclerView.canScrollVertically(1)) {
+                    // API 호출 및 데이터 로드
+                    val query = binding.svSearch.query.toString()
+                    communicateNetWork(setUpImageParameter(query), setUpVideoParameter(query))
+                    isLoading = true
+                }
+            }
+        })
+
         //저장해둔 이전 검색어를 자동으로 입력해서 검색한다.
         val prevText = SharedPref.getString(requireContext(), "prevSearch", "")
         if (prevText.isNotEmpty()) {
@@ -117,15 +134,22 @@ class SearchResultFragment : Fragment() {
         combinedList.sortBy { it.datetime }
 
         requireActivity().runOnUiThread {
-            (binding.srRecyclerview.adapter as StaggeredGridAdapter).addItems(combinedList)
+            var isClear = false
+            if (prevSearchText != binding.svSearch.query.toString()) {
+                isClear = true
+                prevSearchText = binding.svSearch.query.toString()
+            }
+            (binding.srRecyclerview.adapter as StaggeredGridAdapter).addItems(combinedList, isClear)
+            isLoading = false   //화면에 그리기 전까지 로딩차단
         }
     }
 
     private fun setUpImageParameter(searchText: String): HashMap<String, String> {
+        pageCnt++
         return hashMapOf(
             "query" to searchText,
             "sort" to "accuracy", // accuracy(정확도순) 또는 recency(최신순), 기본 값 accuracy
-            "page" to "1",  //결과 페이지 번호, 1~50 사이의 값, 기본 값 1
+            "page" to pageCnt.toString(),  //결과 페이지 번호, 1~50 사이의 값, 기본 값 1
             "size" to "80"  //한 페이지에 보여질 문서 수, 1~80 사이의 값, 기본 값 80
         )
     }
@@ -133,7 +157,7 @@ class SearchResultFragment : Fragment() {
         return hashMapOf(
             "query" to searchText,
             "sort" to "accuracy", // accuracy(정확도순) 또는 recency(최신순), 기본 값 accuracy
-            "page" to "1",  //결과 페이지 번호, 1~15 사이의 값
+            "page" to pageCnt.toString(),  //결과 페이지 번호, 1~15 사이의 값
             "size" to "15"  //한 페이지에 보여질 문서 수, 1~30 사이의 값, 기본 값
         )
     }

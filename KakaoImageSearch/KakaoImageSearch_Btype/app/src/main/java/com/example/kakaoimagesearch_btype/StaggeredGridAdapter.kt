@@ -87,8 +87,9 @@ class StaggeredGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     }
 
-    fun addItems(resData: List<KakaoCommonData>) {
-        items.clear()
+    fun addItems(resData: List<KakaoCommonData>, isClear: Boolean) {
+        if(isClear) items.clear()
+
         items.addAll(resData)
         notifyDataSetChanged()
     }
