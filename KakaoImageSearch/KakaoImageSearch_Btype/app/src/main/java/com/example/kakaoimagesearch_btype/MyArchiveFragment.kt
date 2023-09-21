@@ -12,14 +12,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.kakaoimagesearch_btype.databinding.FragmentMyArchiveBinding
 import com.example.kakaoimagesearch_btype.utils.SharedPref
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.reflect.TypeToken
 import java.lang.Exception
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 class MyArchiveFragment : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
 
     private lateinit var binding: FragmentMyArchiveBinding
     private val staggeredMyArchiveListAdapter by lazy {
@@ -28,10 +25,6 @@ class MyArchiveFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -55,7 +48,7 @@ class MyArchiveFragment : Fragment() {
         staggeredMyArchiveListAdapter.itemClick = object : StaggeredMyArchiveGridAdapter.ItemClick {
             override fun onClick(position: Int) { }
 
-            override fun onLongClick(doc: ImageData.Document) {
+            override fun onLongClick(doc: KakaoCommonData) {
                 var builder = AlertDialog.Builder(context!!)
                 builder.setTitle("연락처 삭제")
                 builder.setMessage("정말로 삭제하시겠습니까?")
@@ -75,12 +68,9 @@ class MyArchiveFragment : Fragment() {
                 builder.setNegativeButton("취소", listener)
                 builder.show()
             }
-
-            override fun onClickAddFolder(doc: ImageData.Document) {
-            }
         }
     }
-    private fun deleteDataRefrash(doc: ImageData.Document) {
+    private fun deleteDataRefrash(doc: KakaoCommonData) {
         //저장된 목록을 프리퍼런스에서 가져온다
         val prevSaveList = SharedPref.getString(requireContext(), "addFolder", "")
         //가져온 목록을 리스트객체로 변환
@@ -102,43 +92,25 @@ class MyArchiveFragment : Fragment() {
         staggeredMyArchiveListAdapter.addItems(prevList)
     }
 
-    private fun convertToString(imgDataList: MutableList<ImageData.Document>): String {
-        //프리퍼런스에 저장하려면 객체를 String으로 변환해서 저장해야 한다.
-        //해당 함수는 객체를 String으로 변환하는 함수
-        return GsonBuilder()
-            .disableHtmlEscaping()
-            .create()
-            .toJson(imgDataList)
+    private fun convertToString(list: MutableList<KakaoCommonData>): String {
+        val gsonBuilder = GsonBuilder().disableHtmlEscaping()
+        gsonBuilder.registerTypeAdapter(KakaoCommonData::class.java, KakaoCommonDataTypeAdapter())
+        val gson = gsonBuilder.create()
+        val jsonArray = JsonArray()
+        for (item in list) {
+            jsonArray.add(gson.toJsonTree(item, KakaoCommonData::class.java))
+        }
+        return jsonArray.toString()
     }
 
-    /**
-     * json String을 객체로 변환하는 함수
-     */
-    private fun convertToObject(jsonStr: String): MutableList<ImageData.Document> {
+    private fun convertToObject(jsonStr: String): MutableList<KakaoCommonData> {
         return try {
-            GsonBuilder().create().fromJson(jsonStr, Array<ImageData.Document>::class.java).toMutableList()
+            val gsonBuilder = GsonBuilder()
+            gsonBuilder.registerTypeAdapter(KakaoCommonData::class.java, KakaoCommonDataTypeAdapter())
+            val gson = gsonBuilder.create()
+            gson.fromJson(jsonStr, object : TypeToken<MutableList<KakaoCommonData>>() {}.type)
         } catch (e: Exception) {
             mutableListOf()
         }
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MyArchiveFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MyArchiveFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }

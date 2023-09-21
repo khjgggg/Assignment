@@ -13,15 +13,13 @@ import com.example.kakaoimagesearch_btype.databinding.FragmentSearchResultBindin
 import com.example.kakaoimagesearch_btype.retrofit.NetWorkClient
 import com.example.kakaoimagesearch_btype.utils.SharedPref
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class SearchResultFragment : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
 
     private lateinit var binding: FragmentSearchResultBinding
     private val staggeredListAdapter by lazy {
@@ -30,10 +28,6 @@ class SearchResultFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -73,7 +67,7 @@ class SearchResultFragment : Fragment() {
 
             override fun onLongClick(position: Int) { }
 
-            override fun onClickAddFolder(doc: ImageData.Document) {
+            override fun onClickAddFolder(doc: KakaoCommonData) {
 
                 //저장된 목록을 프리퍼런스에서 가져온다
                 val prevSaveList = SharedPref.getString(requireContext(), "addFolder", "")
@@ -81,7 +75,7 @@ class SearchResultFragment : Fragment() {
                 val prevList = convertToObject(prevSaveList)
                 if (prevList.isEmpty()) {
                     //리스트가 비어있으면 리스트생성 후 추가
-                    val saveList = mutableListOf<ImageData.Document>()
+                    val saveList = mutableListOf<KakaoCommonData>()
                     saveList.add(doc)
                     SharedPref.setString(requireContext(), "addFolder", convertToString(saveList))
 
@@ -140,40 +134,25 @@ class SearchResultFragment : Fragment() {
         )
     }
 
-    private fun convertToString(imgDataList: MutableList<ImageData.Document>): String {
-        //프리퍼런스에 저장하려면 객체를 String으로 변환해서 저장해야 한다.
-        //해당 함수는 객체를 String으로 변환하는 함수
-        return GsonBuilder()
-            .disableHtmlEscaping()
-            .create()
-            .toJson(imgDataList)
+    private fun convertToString(list: MutableList<KakaoCommonData>): String {
+        val gsonBuilder = GsonBuilder().disableHtmlEscaping()
+        gsonBuilder.registerTypeAdapter(KakaoCommonData::class.java, KakaoCommonDataTypeAdapter())
+        val gson = gsonBuilder.create()
+        val jsonArray = JsonArray()
+        for (item in list) {
+            jsonArray.add(gson.toJsonTree(item, KakaoCommonData::class.java))
+        }
+        return jsonArray.toString()
     }
 
-    private fun convertToObject(jsonStr: String): MutableList<ImageData.Document> {
+    private fun convertToObject(jsonStr: String): MutableList<KakaoCommonData> {
         return try {
-            GsonBuilder().create().fromJson(jsonStr, Array<ImageData.Document>::class.java).toMutableList()
+            val gsonBuilder = GsonBuilder()
+            gsonBuilder.registerTypeAdapter(KakaoCommonData::class.java, KakaoCommonDataTypeAdapter())
+            val gson = gsonBuilder.create()
+            gson.fromJson(jsonStr, object : TypeToken<MutableList<KakaoCommonData>>() {}.type)
         } catch (e: Exception) {
             mutableListOf()
         }
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SearchResultFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SearchResultFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }

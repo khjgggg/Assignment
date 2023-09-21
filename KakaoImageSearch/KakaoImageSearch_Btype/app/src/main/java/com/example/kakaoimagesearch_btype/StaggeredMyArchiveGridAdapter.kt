@@ -4,54 +4,84 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kakaoimagesearch_btype.databinding.LayoutPhotoItemBinding
+import com.example.kakaoimagesearch_btype.databinding.LayoutVideoItemBinding
 
 class StaggeredMyArchiveGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     interface ItemClick {
         fun onClick(position: Int)
-        fun onLongClick(doc: ImageData.Document)
+        fun onLongClick(doc: KakaoCommonData)
 
-        fun onClickAddFolder(doc: ImageData.Document)
     }
 
     var itemClick: ItemClick? = null
-    private val items = mutableListOf<ImageData.Document>()
+    private val items = mutableListOf<KakaoCommonData>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return StaggeredMyArchiveGridItemViewHolder(
-            LayoutPhotoItemBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+        return when (viewType) {
+            ViewType.IMAGE -> {
+                StaggeredMyArchiveGridItemViewHolder(
+                    LayoutPhotoItemBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+            else -> {
+                StaggeredMyArchiveGridVideoItemViewHolder(
+                    LayoutVideoItemBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+        }
     }
-
+    override fun getItemViewType(position: Int): Int {
+        return when (items[position]) {
+            is ImageData.Document -> ViewType.IMAGE
+            else -> {
+                ViewType.VIDEO
+            }
+        }
+    }
     override fun getItemCount(): Int {
         return items.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
+        when (holder) {
+            is StaggeredMyArchiveGridItemViewHolder -> {
+                holder.bind(item as ImageData.Document)
+                holder.itemView.setOnClickListener {
+                    itemClick?.onClick(position)
+                }
+                holder.itemView.setOnLongClickListener {
+                    itemClick?.onLongClick(item)
+                    true
+                }
 
-        val gridItemViewHolder = (holder as StaggeredMyArchiveGridItemViewHolder)
-        gridItemViewHolder.bind(item)
-        gridItemViewHolder.itemView.setOnClickListener {
-            itemClick?.onClick(position)
-        }
-        gridItemViewHolder.itemView.setOnLongClickListener {
-            itemClick?.onLongClick(item)
-            true
-        }
-        gridItemViewHolder.binding.ivAddFolder.setOnClickListener {
-            itemClick?.onClickAddFolder(item)
-        }
-        gridItemViewHolder.binding.ivFavorite.setOnClickListener {
+            }
+            else -> {
+                val videoItemViewHolder = (holder as StaggeredMyArchiveGridVideoItemViewHolder)
+                videoItemViewHolder.bind(item as VideoData.Document)
+                videoItemViewHolder.itemView.setOnClickListener {
+                    itemClick?.onClick(position)
+                }
+                videoItemViewHolder.itemView.setOnLongClickListener {
+                    itemClick?.onLongClick(item)
+                    true
+                }
+
+            }
         }
     }
 
-    fun addItems(resData: MutableList<ImageData.Document>) {
+    fun addItems(resData: MutableList<KakaoCommonData>) {
         items.clear()
         items.addAll(resData)
         notifyDataSetChanged()
@@ -60,6 +90,13 @@ class StaggeredMyArchiveGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHold
     inner class StaggeredMyArchiveGridItemViewHolder(val binding: LayoutPhotoItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ImageData.Document) {
+            binding.item = item
+        }
+    }
+
+    inner class StaggeredMyArchiveGridVideoItemViewHolder(val binding: LayoutVideoItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: VideoData.Document) {
             binding.item = item
         }
     }

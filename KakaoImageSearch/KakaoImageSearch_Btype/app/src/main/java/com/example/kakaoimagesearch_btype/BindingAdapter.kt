@@ -15,8 +15,11 @@ fun imgRes(imageView: ImageView, url:String) {
 }
 
 @BindingAdapter("setDisplayText")
-fun setDisplayText(textView: TextView, text: String) {
-    textView.text = "[image] $text"
+fun setDisplayText(textView: TextView, item: KakaoCommonData) {
+    textView.text = when (item) {
+        is ImageData.Document -> "[image] ${item.display_sitename}"
+        else -> "[video] ${(item as VideoData.Document).title}"
+    }
 }
 
 @BindingAdapter("setTextDatetime")
