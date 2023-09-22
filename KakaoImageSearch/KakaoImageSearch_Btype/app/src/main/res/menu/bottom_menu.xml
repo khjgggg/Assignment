@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/item_one"
-        android:icon="@drawable/ic_action_search"
+        android:icon="@drawable/ic_baseline_search_24"
         android:title="검색결과" />
     <item
         android:id="@+id/item_two"
