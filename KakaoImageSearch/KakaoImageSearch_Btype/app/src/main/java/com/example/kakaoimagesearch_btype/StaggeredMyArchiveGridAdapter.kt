@@ -57,6 +57,7 @@ class StaggeredMyArchiveGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHold
         when (holder) {
             is StaggeredMyArchiveGridItemViewHolder -> {
                 holder.bind(item as ImageData.Document)
+                holder.binding.ivAddFolder.isSelected = true
                 holder.itemView.setOnClickListener {
                     itemClick?.onClick(position)
                 }
@@ -69,6 +70,7 @@ class StaggeredMyArchiveGridAdapter : RecyclerView.Adapter<RecyclerView.ViewHold
             else -> {
                 val videoItemViewHolder = (holder as StaggeredMyArchiveGridVideoItemViewHolder)
                 videoItemViewHolder.bind(item as VideoData.Document)
+                holder.binding.ivAddFolder.isSelected = true
                 videoItemViewHolder.itemView.setOnClickListener {
                     itemClick?.onClick(position)
                 }

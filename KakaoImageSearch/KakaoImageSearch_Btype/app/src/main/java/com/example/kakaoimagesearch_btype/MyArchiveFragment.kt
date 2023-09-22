@@ -2,7 +2,6 @@ package com.example.kakaoimagesearch_btype
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Im
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,10 +20,6 @@ class MyArchiveFragment : Fragment() {
     private lateinit var binding: FragmentMyArchiveBinding
     private val staggeredMyArchiveListAdapter by lazy {
         StaggeredMyArchiveGridAdapter()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -50,7 +45,7 @@ class MyArchiveFragment : Fragment() {
 
             override fun onLongClick(doc: KakaoCommonData) {
                 var builder = AlertDialog.Builder(context!!)
-                builder.setTitle("연락처 삭제")
+                builder.setTitle("내 보관함에서 삭제")
                 builder.setMessage("정말로 삭제하시겠습니까?")
                 builder.setIcon(R.drawable.ic_baseline_delete_outline_24)
                 val listener = object : DialogInterface.OnClickListener {
