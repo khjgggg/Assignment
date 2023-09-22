@@ -30,10 +30,6 @@ class SearchResultFragment : Fragment() {
     private var pageCnt = 0
     private var prevSearchText = ""
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,7 +40,7 @@ class SearchResultFragment : Fragment() {
         binding.svSearch.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    SharedPref.setString(requireContext(),"prevSearch", it)
+                    SharedPref.setString(requireContext(), "prevSearch", it)
                     communicateNetWork(setUpImageParameter(it), setUpVideoParameter(it))
                 }
                 return false
@@ -66,9 +62,9 @@ class SearchResultFragment : Fragment() {
         binding.srRecyclerview.layoutManager = staggeredGridLayoutManager
 
         staggeredListAdapter.itemClick = object : StaggeredGridAdapter.ItemClick {
-            override fun onClick(position: Int) { }
+            override fun onClick(position: Int) {}
 
-            override fun onLongClick(position: Int) { }
+            override fun onLongClick(position: Int) {}
 
             override fun onClickAddFolder(doc: KakaoCommonData) {
 
@@ -82,18 +78,16 @@ class SearchResultFragment : Fragment() {
                     saveList.add(doc)
                     SharedPref.setString(requireContext(), "addFolder", convertToString(saveList))
 
-                    Toast.makeText(requireContext(),"내 보관함에 저장.", Toast.LENGTH_SHORT).show()
-                }
-                else {
+                    Toast.makeText(requireContext(), "내 보관함에 저장.", Toast.LENGTH_SHORT).show()
+                } else {
                     //리스트가 비이있지 않으면
                     if (!prevList.contains(doc)) {
                         //중복체크 후, 중복이 아니면 추가
                         prevList.add(doc)
-                        Toast.makeText(requireContext(),"내 보관함에 저장.", Toast.LENGTH_SHORT).show()
-                    }
-                    else {
+                        Toast.makeText(requireContext(), "내 보관함에 저장.", Toast.LENGTH_SHORT).show()
+                    } else {
                         //중복이면 중복 토스트 표시
-                        Toast.makeText(requireContext(),"이미 저장되어 있습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "이미 저장되어 있습니다.", Toast.LENGTH_SHORT).show()
                     }
                     //추가한 목록을 저장한다
                     SharedPref.setString(requireContext(), "addFolder", convertToString(prevList))
@@ -123,10 +117,13 @@ class SearchResultFragment : Fragment() {
         }
     }
 
-    private fun communicateNetWork(imgParam: HashMap<String, String>, videoParam: HashMap<String, String>)
-    = lifecycleScope.launch {
+    private fun communicateNetWork(
+        imgParam: HashMap<String, String>,
+        videoParam: HashMap<String, String>
+    ) = lifecycleScope.launch {
         val responseData = NetWorkClient.kakaoNetWork.getImage(NetWorkClient.API_AUTHKEY, imgParam)
-        val responseVideoData = NetWorkClient.kakaoNetWork.getVideo(NetWorkClient.API_AUTHKEY, videoParam)
+        val responseVideoData =
+            NetWorkClient.kakaoNetWork.getVideo(NetWorkClient.API_AUTHKEY, videoParam)
 
         val combinedList = mutableListOf<KakaoCommonData>()
         responseData.documents?.let { combinedList.addAll(it) }
@@ -153,6 +150,7 @@ class SearchResultFragment : Fragment() {
             "size" to "80"  //한 페이지에 보여질 문서 수, 1~80 사이의 값, 기본 값 80
         )
     }
+
     private fun setUpVideoParameter(searchText: String): HashMap<String, String> {
         return hashMapOf(
             "query" to searchText,
@@ -176,7 +174,10 @@ class SearchResultFragment : Fragment() {
     private fun convertToObject(jsonStr: String): MutableList<KakaoCommonData> {
         return try {
             val gsonBuilder = GsonBuilder()
-            gsonBuilder.registerTypeAdapter(KakaoCommonData::class.java, KakaoCommonDataTypeAdapter())
+            gsonBuilder.registerTypeAdapter(
+                KakaoCommonData::class.java,
+                KakaoCommonDataTypeAdapter()
+            )
             val gson = gsonBuilder.create()
             gson.fromJson(jsonStr, object : TypeToken<MutableList<KakaoCommonData>>() {}.type)
         } catch (e: Exception) {
