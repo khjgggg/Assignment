@@ -16,6 +16,7 @@ import com.example.kakaoimagesearch_btype.utils.SharedPref
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -121,9 +122,16 @@ class SearchResultFragment : Fragment() {
         imgParam: HashMap<String, String>,
         videoParam: HashMap<String, String>
     ) = lifecycleScope.launch {
-        val responseData = NetWorkClient.kakaoNetWork.getImage(NetWorkClient.API_AUTHKEY, imgParam)
-        val responseVideoData =
+
+        val imageJob = async {
+            NetWorkClient.kakaoNetWork.getImage(NetWorkClient.API_AUTHKEY, imgParam)
+        }
+        val videoJob = async {
             NetWorkClient.kakaoNetWork.getVideo(NetWorkClient.API_AUTHKEY, videoParam)
+        }
+
+        val responseData = imageJob.await()
+        val responseVideoData = videoJob.await()
 
         val combinedList = mutableListOf<KakaoCommonData>()
         responseData.documents?.let { combinedList.addAll(it) }
